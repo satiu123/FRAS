@@ -1,5 +1,6 @@
+# 部分配置参数
 import os
-
+from pathlib import Path
 # Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
@@ -18,3 +19,15 @@ FONT_SCALE = 0.4
 THICKNESS = 1
 COLOR_MATCH = (0, 255, 0)    # Green
 COLOR_UNKNOWN = (0, 0, 255)  # Red
+
+
+#实时考勤配置
+PROJECT_ROOT = Path(__file__).parent.parent
+
+# 模型配置
+MODEL_NAME = 'buffalo_l'
+SIMILARITY_THRESHOLD = 0.35  # 根据你的数据调整
+
+# 路径配置
+CAPTURE_DIR = PROJECT_ROOT / "data" / "captures"  # 保存抓拍图像
+OUTPUTS_DIR = PROJECT_ROOT / "data" / "results"  # 保存输出视频

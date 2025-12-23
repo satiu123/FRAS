@@ -196,6 +196,9 @@
             <el-button type="primary" :icon="DocumentAdd" @click="showManualSigninDialog">
               手动补签
             </el-button>
+            <el-button type="success" :icon="Camera" @click="goToPhotoSignin">
+              拍照签到
+            </el-button>
             <el-button type="success" :icon="Download" @click="exportData">
               导出数据
             </el-button>
@@ -235,14 +238,16 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRouter } from 'vue-router'
 import {
   User, CircleCheck, CircleClose, TrendCharts, Clock, UserFilled,
-  DataAnalysis, RefreshRight, Operation, DocumentAdd, Download, View
+  DataAnalysis, RefreshRight, Operation, DocumentAdd, Download, View, Camera
 } from '@element-plus/icons-vue'
 import { realtimeAPI, attendanceAPI, exportAPI } from '@/api'
 import websocket from '@/utils/websocket'
 import dayjs from 'dayjs'
 
+const router = useRouter()
 const loading = ref(false)
 const wsConnected = ref(false)
 const submitting = ref(false)
@@ -396,6 +401,11 @@ async function viewAbsentList() {
   } catch (error) {
     ElMessage.error('获取缺勤名单失败')
   }
+}
+
+// 跳转到拍照签到页面
+function goToPhotoSignin() {
+  router.push('/photo-signin')
 }
 
 // 工具函数

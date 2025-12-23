@@ -29,6 +29,12 @@ const routes = [
         name: 'Statistics',
         component: () => import('@/views/Statistics.vue'),
         meta: { title: '数据统计', icon: 'DataAnalysis' }
+      },
+      {
+        path: 'photo-signin',
+        name: 'PhotoSignin',
+        component: () => import('@/views/PhotoSignin.vue'),
+        meta: { title: '拍照签到', icon: 'Camera' }
       }
     ]
   }

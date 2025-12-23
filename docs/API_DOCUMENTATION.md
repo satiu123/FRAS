@@ -862,6 +862,130 @@ function playNotificationSound() {
 
 ---
 
+## 📸 人脸识别接口
+
+### 6.1 上传图片识别签到
+
+**端点**: `POST /api/recognition/upload-image`
+
+**描述**: 上传图片进行人脸识别并自动签到
+
+**支持方式**:
+1. multipart/form-data 文件上传
+2. JSON base64 编码
+
+**请求示例 1 (文件上传)**:
+```http
+POST /api/recognition/upload-image
+Content-Type: multipart/form-data
+
+file=<图片文件>
+```
+
+**请求示例 2 (Base64)**:
+```json
+{
+  "image": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
+}
+```
+
+**成功响应**:
+```json
+{
+  "success": true,
+  "message": "检测到 3 个人脸，识别成功 3 人，签到成功 2 人",
+  "data": {
+    "detected_faces": 3,
+    "recognized": [
+      {
+        "name": "张三",
+        "confidence": 0.85,
+        "status": "matched",
+        "bbox": [100, 200, 300, 400],
+        "signed_in": true
+      },
+      {
+        "name": "李四",
+        "confidence": 0.78,
+        "status": "matched",
+        "bbox": [400, 200, 600, 400],
+        "already_signed": true
+      }
+    ],
+    "unknown": [
+      {
+        "name": "Unknown",
+        "confidence": 0.35,
+        "status": "unknown",
+        "bbox": [700, 200, 900, 400]
+      }
+    ],
+    "signed_in": [
+      {
+        "name": "张三",
+        "confidence": 0.85,
+        "time": "2025-12-23 14:30:00"
+      }
+    ]
+  }
+}
+```
+
+**失败响应**:
+```json
+{
+  "success": false,
+  "message": "未检测到人脸，请确保照片清晰且包含正脸"
+}
+```
+
+### 6.2 仅识别（不签到）
+
+**端点**: `POST /api/recognition/recognize-only`
+
+**描述**: 识别图片中的人脸，但不记录签到（用于预览）
+
+**请求/响应**: 与 `/upload-image` 相同，但 `data.signed_in` 始终为空
+
+**使用场景**:
+- 预览识别效果
+- 测试识别准确度
+- 查看图片中的人脸
+
+**前端示例**:
+```javascript
+import { recognitionAPI } from '@/api'
+
+// 文件上传方式
+async function uploadFile(file) {
+  const formData = new FormData()
+  formData.append('file', file)
+  const result = await recognitionAPI.uploadImage(formData)
+  return result
+}
+
+// Base64方式
+async function uploadBase64(base64Image) {
+  const result = await recognitionAPI.uploadImage({
+    image: base64Image
+  })
+  return result
+}
+
+// 使用摄像头拍照
+async function captureAndRecognize() {
+  const canvas = videoRef.value
+  const base64 = canvas.toDataURL('image/jpeg', 0.9)
+  const result = await recognitionAPI.uploadImage({ image: base64 })
+  
+  if (result.success) {
+    console.log(`签到成功: ${result.data.signed_in.length} 人`)
+  }
+}
+```
+
+---
+
 ## ❌ 错误处理
 
 ### HTTP 状态码

@@ -136,3 +136,16 @@ export const exportAPI = {
     return api.get('/export/attendance', { params })
   }
 }
+
+export const recognitionAPI = {
+  // 上传图片进行识别签到
+  uploadImage(data) {
+    return api.post('/recognition/upload-image', data)
+  },
+  
+  // 仅识别不签到（预览）
+  recognizeOnly(data) {
+    return api.post('/recognition/recognize-only', data)
+  }
+}
+

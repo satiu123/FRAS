@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import os
 import pickle
-import config
 
 def load_image(path):
     """

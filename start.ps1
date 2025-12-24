@@ -27,10 +27,11 @@ Write-Host "2. 启动前端开发服务器" -ForegroundColor White
 Write-Host "3. 同时启动前后端（推荐）" -ForegroundColor White
 Write-Host "4. 安装依赖" -ForegroundColor White
 Write-Host "5. 初始化数据库" -ForegroundColor White
-Write-Host "6. 退出" -ForegroundColor White
+Write-Host "6. 更新人脸数据库 (students.pkl)" -ForegroundColor White
+Write-Host "7. 退出" -ForegroundColor White
 Write-Host ""
 
-$choice = Read-Host "请输入选项 (1-6)"
+$choice = Read-Host "请输入选项 (1-7)"
 
 switch ($choice) {
     "1" {
@@ -88,6 +89,16 @@ switch ($choice) {
         Write-Host "✅ 数据库初始化完成!" -ForegroundColor Green
     }
     "6" {
+        Write-Host ""
+        Write-Host "🔄 更新人脸数据库..." -ForegroundColor Cyan
+        Write-Host "扫描 data/train 目录中的所有学生人脸图片" -ForegroundColor Yellow
+        Write-Host "生成特征向量并更新到 students.pkl" -ForegroundColor Yellow
+        Write-Host ""
+        python src/register.py
+        Write-Host ""
+        Write-Host "✅ 人脸数据库更新完成!" -ForegroundColor Green
+    }
+    "7" {
         Write-Host "👋 再见!" -ForegroundColor Cyan
         exit 0
     }

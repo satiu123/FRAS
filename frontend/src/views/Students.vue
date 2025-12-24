@@ -16,6 +16,9 @@
         </el-input>
         
         <div class="actions">
+          <el-button type="success" :icon="Refresh" @click="updateFaceDatabase" :loading="updating">
+            更新人脸数据库
+          </el-button>
           <el-button type="primary" :icon="Plus" @click="showCreateDialog">
             添加学生
           </el-button>
@@ -99,9 +102,9 @@
     >
       <div class="face-upload">
         <el-upload
-          :action="`/api/students/${currentStudent?.id}/face`"
-          :headers="{ 'Content-Type': 'multipart/form-data' }"
+          :action="`http://127.0.0.1:5000/api/students/${currentStudent?.id}/face`"
           :on-success="handleUploadSuccess"
+          :on-error="handleUploadError"
           :before-upload="beforeUpload"
           accept="image/*"
           list-type="picture-card"
@@ -131,11 +134,12 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Plus, Picture, Edit, Delete } from '@element-plus/icons-vue'
+import { Search, Plus, Picture, Edit, Delete, Refresh } from '@element-plus/icons-vue'
 import { studentsAPI } from '@/api'
 
 const loading = ref(false)
 const submitting = ref(false)
+const updating = ref(false)
 const dialogVisible = ref(false)
 const faceDialogVisible = ref(false)
 const searchKeyword = ref('')
@@ -257,9 +261,18 @@ function beforeUpload(file) {
   return isImage && isLt5M
 }
 
-function handleUploadSuccess() {
-  ElMessage.success('上传成功')
-  manageFaces(currentStudent.value)
+function handleUploadSuccess(response) {
+  if (response.success) {
+    ElMessage.success('上传成功')
+    manageFaces(currentStudent.value)
+  } else {
+    ElMessage.error(response.message || '上传失败')
+  }
+}
+
+function handleUploadError(error) {
+  console.error('上传错误:', error)
+  ElMessage.error('上传失败，请检查网络连接或文件格式')
 }
 
 function deleteFaceImage(filename) {
@@ -274,6 +287,18 @@ function deleteFaceImage(filename) {
       }
     })
 }
+async function updateFaceDatabase() {
+  updating.value = true
+  try {
+    await studentsAPI.updateFaceDatabase()
+    ElMessage.success('人脸数据库已更新！所有学生的特征向量已重新生成')
+  } catch (error) {
+    ElMessage.error('更新失败，请稍后重试')
+  } finally {
+    updating.value = false
+  }
+}
+
 
 onMounted(() => {
   loadStudents()

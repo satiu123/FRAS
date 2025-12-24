@@ -110,6 +110,8 @@ FRAS/
 2. **访问管理界面**
    - 打开浏览器访问 http://localhost:3000
    - 在 **学生管理** 页面添加学生并上传人脸照片
+   - 💡 **智能增量更新** - 上传/删除人脸图片后仅更新该学生的特征向量，快速高效
+   - 🔄 **手动全量更新** - 点击"更新人脸数据库"按钮或运行 `python src/register.py` 重建所有学生特征
    - 在 **实时监控** 页面查看签到动态
    - 在 **签到记录** 页面管理考勤数据
    - 在 **数据统计** 页面查看图表分析
@@ -173,6 +175,9 @@ python tests/test_api.py
 **Q: 首次启动报错？**
 - A: 确保已安装依赖 `pip install -r requirements.txt` 和 `cd frontend && npm install`
 
+**Q: 上传人脸图片后无法识别？**
+- A: 系统会**自动增量更新**相关学生的人脸数据库，无需手动操作。也可以在学生管理页面点击"更新人脸数据库"按钮进行全量更新，或运行启动脚本选择选项 [6]
+
 **Q: 注册时提示 No face detected？**
 - A: 使用更清晰的正面照片，确保人脸占比足够大
 
@@ -183,7 +188,7 @@ python tests/test_api.py
 - A: 检查前端是否启动（http://localhost:3000）和 API 代理配置
 
 **Q: 数据库文件在哪里？**
-- A: 默认位置 `data/database/attendance.db`
+- A: 默认位置 `data/database/attendance.db`，人脸数据库为 `students.pkl`
 
 ## 📄 License
 

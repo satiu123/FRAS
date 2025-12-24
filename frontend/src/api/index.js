@@ -58,6 +58,11 @@ export const studentsAPI = {
   // 批量创建
   batchCreate(students) {
     return api.post('/students/batch', { students })
+  },
+  
+  // 更新人脸数据库
+  updateFaceDatabase() {
+    return api.post('/students/update-face-database')
   }
 }
 

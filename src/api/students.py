@@ -14,6 +14,7 @@ from PIL import Image
 import io
 
 from src.databaseBuild.db import DB_PATH, register_student_to_db
+from src.register import register_faces
 
 students_bp = Blueprint('students', __name__, url_prefix='/api/students')
 
@@ -340,6 +341,13 @@ def upload_face_image(student_id):
         else:
             return format_response(False, "未找到图片数据", code=400)
         
+        # 上传成功后自动更新该学生的人脸数据库（增量更新）
+        try:
+            register_faces(student_names=student_name)
+            print(f"✓ Updated face database for {student_name}")
+        except Exception as e:
+            print(f"Warning: Failed to update face database for {student_name}: {e}")
+        
         return format_response(True, "人脸图片上传成功", {
             "filename": filename,
             "path": str(filepath.relative_to(project_root))
@@ -369,6 +377,13 @@ def delete_face_image(student_id, filename):
         
         filepath.unlink()
         
+        # 删除成功后自动更新该学生的人脸数据库（增量更新）
+        try:
+            register_faces(student_names=student_name)
+            print(f"✓ Updated face database for {student_name}")
+        except Exception as e:
+            print(f"Warning: Failed to update face database for {student_name}: {e}")
+        
         return format_response(True, "图片已删除")
     except Exception as e:
         return format_response(False, f"删除失败: {str(e)}", code=500)
@@ -396,6 +411,18 @@ def get_face_image(student_id, filename):
         return send_file(str(filepath), mimetype='image/jpeg')
     except Exception as e:
         return format_response(False, f"获取失败: {str(e)}", code=500)
+
+@students_bp.route('/update-face-database', methods=['POST'])
+def update_face_database():
+    """
+    手动更新人脸数据库 (students.pkl)
+    扫描所有学生的人脸图片并重新生成特征数据库
+    """
+    try:
+        register_faces()
+        return format_response(True, "人脸数据库已更新")
+    except Exception as e:
+        return format_response(False, f"更新失败: {str(e)}", code=500)
 
 @students_bp.route('/batch', methods=['POST'])
 def batch_create_students():

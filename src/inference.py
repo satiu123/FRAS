@@ -84,7 +84,7 @@ def run_inference(image_path):
             final_name = f"{best_name} ({max_sim:.2f})"
             color = config.COLOR_MATCH
             
-            # ✅ 自动签到！
+            # 自动签到！
             today = date.today()
             # # 可选：保存带人脸框的截图用于复核
             # capture_path = os.path.join(config.CAPTURE_DIR, f"capture_{today}_{best_name}.jpg")

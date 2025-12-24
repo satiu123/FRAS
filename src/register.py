@@ -5,46 +5,60 @@ import argparse
 import numpy as np
 from insightface.app import FaceAnalysis
 
-# ====== 新增：添加项目根目录到 sys.path ======
 from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
-# ============================================
 
-import config
-import utils
+from src import config
+from src import utils
 
-# ====== 新增：导入数据库注册函数 ======
 from src.databaseBuild.db import register_student_to_db
-# ====================================
 
-def register_faces():
+def register_faces(student_names=None):
     """
     Scans the KNOWN_FACES_DIR, extracts embeddings, and saves them to the database.
     Also registers each student into the SQLite attendance system.
+    
+    Args:
+        student_names: Optional list of student names or single student name to update.
+                      If None, updates all students (full scan).
+                      If provided, only updates the specified student(s) incrementally.
     """
     # Initialize InsightFace
     app = FaceAnalysis(providers=['CPUExecutionProvider'])
-    app.prepare(ctx_id=0, det_size=(320, 320)) # Reducing det_size to better match small inputs, or remove it entirely. 
-    # Actually, for small images, (640, 640) might be too large difference. Let's try (320, 320) or just auto. 
-    # Let's try flexible mode first by removing it? No, det_size is required or defaults to something.
-    # Let's set it to (320, 320) since user mentioned 278x270.
-    # Wait, best practice is usually to try multiple sizes or use a size close to input. 
-    # Let's start by removing the explicit argument to let library decide (usually defaults to larger, but let's see).
-    # Re-reading: Removing it often defaults to (640, 640).
-    # Let's try explicitly setting (320, 320) as a test for small images.
     app.prepare(ctx_id=0, det_size=(320, 320))
 
-    known_faces = {}
+    # Load existing database for incremental update
+    if student_names is not None:
+        try:
+            known_faces = utils.load_database(config.DB_PATH)
+        except:
+            known_faces = {}
+    else:
+        known_faces = {}
     
     if not os.path.exists(config.KNOWN_FACES_DIR):
         print(f"Error: Directory {config.KNOWN_FACES_DIR} does not exist.")
         return
 
+    # Convert single name to list
+    if student_names is not None:
+        if isinstance(student_names, str):
+            student_names = [student_names]
+        print(f"Incremental update for: {', '.join(student_names)}")
+    else:
+        print("Full scan update for all students")
+
     # Iterate over student folders
-    for person_name in os.listdir(config.KNOWN_FACES_DIR):
+    students_to_process = student_names if student_names else os.listdir(config.KNOWN_FACES_DIR)
+    
+    for person_name in students_to_process:
         person_dir = os.path.join(config.KNOWN_FACES_DIR, person_name)
         if not os.path.isdir(person_dir):
+            # If student folder doesn't exist, remove from database
+            if person_name in known_faces:
+                del known_faces[person_name]
+                print(f"Removed {person_name} from database (folder not found)")
             continue
 
         print(f"Processing {person_name}...")
@@ -76,7 +90,7 @@ def register_faces():
             known_faces[person_name] = avg_embedding
             print(f"Registered {person_name} with {len(embeddings)} images.")
 
-            # ✅✅✅ 新增：同步写入 SQLite 数据库 ✅✅✅
+            # 同步写入 SQLite 数据库 
             register_student_to_db(person_name)
 
         else:

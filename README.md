@@ -197,39 +197,3 @@ MIT License
 ## 👥 贡献
 
 欢迎提交 Issue 和 Pull Request！
-
----
-
-**立即体验完整的 Web 管理平台！** 🎉
-   ```bash
-   # 将学生照片放入 data/train/学生姓名/ 目录
-   python src/register.py
-   ```
-
-3. **开始签到**
-   ```bash
-   # 实时摄像头签到
-   python src/realtime.py
-   
-   # 或批量识别照片
-   python src/inference.py data/test/classroom.jpg
-   ```
-
-4. **查询考勤**
-   ```bash
-   python src/query.py --name "张三"
-   ```
-
-## ⚙️ 配置说明 (`src/config.py`)
-
-*   `MATCH_THRESHOLD`: 默认为 **0.45**。
-    *   识别太严格（漏识） -> **调低**数值。
-    *   识别太宽松（误识） -> **调高**数值。
-*   `FONT_SCALE`: 控制人脸框文字大小（代码已实现动态调整，此处为基准值）。
-
-## ❓ 常见问题
-
-*   **Q: 注册时提示 Warning: No face detected？**
-    *   A: 系统已针对小图进行了优化。如果仍检测不到，请尝试使用更清晰、正脸占比更大的照片。
-*   **Q: 数据库文件在哪里？**
-    *   A: 默认生成在 `data/` 目录下（如 `data/attendance.db` 或类似名称，详见配置）。

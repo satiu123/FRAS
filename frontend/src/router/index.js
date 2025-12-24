@@ -35,6 +35,12 @@ const routes = [
         name: 'PhotoSignin',
         component: () => import('@/views/PhotoSignin.vue'),
         meta: { title: '拍照签到', icon: 'Camera' }
+      },
+      {
+        path: 'realtime-recognition',
+        name: 'RealtimeRecognition',
+        component: () => import('@/views/RealtimeRecognition.vue'),
+        meta: { title: '实时识别', icon: 'VideoCamera' }
       }
     ]
   }

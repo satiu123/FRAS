@@ -16,6 +16,31 @@ export const realtimeAPI = {
   // 获取最近签到
   getRecent(limit = 10) {
     return api.get('/realtime/recent', { params: { limit } })
+  },
+  
+  // 启动摄像头
+  startCamera(cameraIndex = 0) {
+    return api.post('/realtime/start-camera', { camera_index: cameraIndex })
+  },
+  
+  // 停止摄像头
+  stopCamera() {
+    return api.post('/realtime/stop-camera')
+  },
+  
+  // 获取摄像头状态
+  getCameraStatus() {
+    return api.get('/realtime/camera-status')
+  },
+  
+  // 处理单帧图像
+  processFrame(imageData, record = true) {
+    return api.post('/realtime/process-frame', { image: imageData, record })
+  },
+  
+  // 重新加载人脸数据库
+  reloadDatabase() {
+    return api.post('/realtime/reload-database')
   }
 }
 

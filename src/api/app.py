@@ -25,6 +25,7 @@ from src.api.statistics import statistics_bp
 from src.api.students import students_bp
 from src.api.attendance import attendance_bp
 from src.api.recognition import recognition_bp
+from src.api.realtime_recognition import realtime_recognition_bp
 
 # Flask应用初始化
 app = Flask(__name__)
@@ -42,6 +43,7 @@ app.register_blueprint(statistics_bp)
 app.register_blueprint(students_bp)
 app.register_blueprint(attendance_bp)
 app.register_blueprint(recognition_bp)
+app.register_blueprint(realtime_recognition_bp)
 
 # 配置上传文件夹
 UPLOAD_FOLDER = project_root / "data" / "uploads"

@@ -199,6 +199,9 @@
             <el-button type="success" :icon="Camera" @click="goToPhotoSignin">
               拍照签到
             </el-button>
+            <el-button type="warning" :icon="VideoCamera" @click="goToRealtimeRecognition">
+              实时识别
+            </el-button>
             <el-button type="success" :icon="Download" @click="exportData">
               导出数据
             </el-button>
@@ -241,7 +244,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import {
   User, CircleCheck, CircleClose, TrendCharts, Clock, UserFilled,
-  DataAnalysis, RefreshRight, Operation, DocumentAdd, Download, View, Camera
+  DataAnalysis, RefreshRight, Operation, DocumentAdd, Download, View, Camera, VideoCamera
 } from '@element-plus/icons-vue'
 import { realtimeAPI, attendanceAPI, exportAPI } from '@/api'
 import websocket from '@/utils/websocket'
@@ -406,6 +409,11 @@ async function viewAbsentList() {
 // 跳转到拍照签到页面
 function goToPhotoSignin() {
   router.push('/photo-signin')
+}
+
+// 跳转到实时识别页面
+function goToRealtimeRecognition() {
+  router.push('/realtime-recognition')
 }
 
 // 工具函数
